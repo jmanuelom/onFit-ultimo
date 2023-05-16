@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTrainingRequest;
 use App\Http\Requests\UpdateTrainingRequest;
 use App\Models\Training;
+use App\Models\Exercise;
 use Illuminate\Http\Request;
 
 
@@ -17,10 +18,18 @@ class TrainingController extends Controller
     public function index()
     {
         try {
-            $training = Training::all();
-            return response()->json($training);
+            $trainings = Training::all();
+            return response()->json([
+                'success' => true,
+                'message' => 'Trainings loaded successfully',
+                'data' => $trainings
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error loading trainings'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading trainings',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -37,30 +46,49 @@ class TrainingController extends Controller
             $validated = $request->validate([
                 'name' => 'required',
                 'level' => 'required',
+                'unique' => 'required'
             ]);
+
             if ($validated) {
                 $training = new Training;
                 $training->name = $request['name'];
                 $training->level = $request['level'];
+                $training->unique = $request['unique'];
                 if ($training->save()) {
-                    return response()->json(['message' => 'Training created succesfully'], 201);
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Training created successfully',
+                        'data' => $training
+                    ], 200);
                 }
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error creating training'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating training',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Training $training)
+    public function show($id)
     {
         try {
-            $training = Training::where('id', $training->id)->first();
-            return response()->json($training);
+            $training = Training::where('id', $id)->first();
+            return response()->json([
+                'success' => true,
+                'message' => 'Training loaded successfully',
+                'data' => $training
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error loading training'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading training',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
     /**
@@ -74,26 +102,44 @@ class TrainingController extends Controller
                 'name' => 'required',
                 'level' => 'required'
             ]);
-            $training->name = $request['name'];
-            $training->level = $request['level'];
-            if ($training->save()) {
-                return response()->json(['message' => 'Exercise modified succesfully'], 201);
+            if ($validated) {
+                $training->name = $request['name'];
+                $training->level = $request['level'];
+                if ($training->save()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Training modified successfully',
+                        'data' => $training
+                    ], 200);
+                }
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error modifying training'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error modifying training',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Training $training)
+    public function destroy($training_id)
     {
         try {
+            $training = Training::where('id', $training_id)->first();
             $training->delete();
-            return response()->json(['message' => 'Training removed succesfully'], 201);
+            return response()->json([
+                'success' => true,
+                'message' => 'Training removed successfully',
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error removing training'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error removing training',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

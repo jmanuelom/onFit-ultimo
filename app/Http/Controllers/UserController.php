@@ -11,9 +11,17 @@ class UserController extends Controller
     {
         try {
             $users = User::all();
-            return response()->json($users);
+            return response()->json([
+                'success' => true,
+                'message' => 'Users loaded successfully',
+                'data' => $users
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error loading users'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading users',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -41,17 +49,26 @@ class UserController extends Controller
                 'email' => 'required',
                 'subscription' => 'required'
             ]);
-
-            $user = new User;
-            $user->name = $request['username'];
-            $user->price = $request['password'];
-            $user->country = $request['email'];
-            $user->category_id = $request['subscription'];
-            if ($user->save()) {
-                return response()->json(['message' => 'User created succesfully'], 201);
+            if ($validated) {
+                $user = new User;
+                $user->username = $request['username'];
+                $user->password = $request['password'];
+                $user->email = $request['email'];
+                $user->subscription = $request['subscription'];
+                if ($user->save()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'User stored successfully',
+                        'data' => $user
+                    ], 200);
+                }
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error creating user'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error storing users',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -60,13 +77,21 @@ class UserController extends Controller
      *
      * 
      */
-    public function show(User $user)
+    public function show($id)
     {
         try {
-            $user = User::where('id', $user->id)->get();
-            return response()->json($user);
+            $user = User::where('id', $id)->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'User loaded successfully',
+                'data' => $user
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error loading user'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading user',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -85,7 +110,7 @@ class UserController extends Controller
      *
      * 
      */
-    public function update(Request $request, User $user)
+    public function update(User $user, Request $request)
     {
         try {
             $validated = $request->validate([
@@ -94,27 +119,44 @@ class UserController extends Controller
                 'email' => 'required',
                 'subscription' => 'required'
             ]);
-
-            $user->username = $request['username'];
-            $user->password = $request['password'];
-            $user->email = $request['email'];
-            $user->subscription = $request['subscription'];
-            if ($user->save()) {
-                return response()->json(['message' => 'User modified succesfully'], 201);
+            if ($validated) {
+                $user->username = $request['username'];
+                $user->password = $request['password'];
+                $user->email = $request['email'];
+                $user->subscription = $request['subscription'];
+                if ($user->save()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'User modified successfully',
+                        'data' => $user
+                    ], 200);
+                }
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error modifying user'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error modifying user',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function destroy(User $user)
+    public function destroy($user_id)
     {
         try {
+            $user = User::where('id', $user_id)->first();
             if ($user->delete()) {
-                return response()->json(['message' => 'User removed succesfully'], 201);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User removed successfully'
+                ], 200);
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error removing user'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error removing user',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

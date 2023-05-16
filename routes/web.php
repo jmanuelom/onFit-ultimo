@@ -17,5 +17,5 @@ use App\Http\Controllers\TrainingController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::resource('/user', UserController::class);
-Route::resource('/training', TrainingController::class);
+/*Route::resource('/user', UserController::class);
+Route::resource('/training', TrainingController::class);*/

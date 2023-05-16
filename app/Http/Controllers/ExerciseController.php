@@ -17,9 +17,17 @@ class ExerciseController extends Controller
     {
         try {
             $exercises = Exercise::all();
-            return response()->json($exercises);
+            return response()->json([
+                'success' => true,
+                'message' => 'Exercises loaded successfully',
+                'data' => $exercises
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error loading exercises'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading exercises',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -48,23 +56,39 @@ class ExerciseController extends Controller
                 $exercise->description = $request['description'];
 
                 if ($exercise->save()) {
-                    return response()->json(['message' => 'Exercise created succesfully'], 201);
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Exercises stored successfully',
+                        'data' => $exercise
+                    ], 200);
                 }
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error creating exercise'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error storing exercise',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
     /**
      * Display the specified resource.
      */
-    public function show(Exercise $exercise)
+    public function show($id)
     {
         try {
-            $exercise = Exercise::where('id', $exercise->id)->first();
-            return response()->json($exercise);
+            $exercise = Exercise::where('id', $id)->first();
+            return response()->json([
+                'success' => true,
+                'message' => 'Exercises loaded successfully',
+                'data' => $exercise
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error loading exercise'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading exercise',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
     /**
@@ -86,25 +110,41 @@ class ExerciseController extends Controller
                 $exercise->level = $request['level'];
                 $exercise->description = $request['description'];
                 if ($exercise->save()) {
-                    return response()->json(['message' => 'Exercise modified succesfully'], 201);
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Exercise modified successfully',
+                        'data' => $exercise
+                    ], 200);
                 }
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error modifying exercise'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error modifying exercise',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Exercise $exercise)
+    public function destroy($exercise_id)
     {
         try {
+            $exercise = Exercise::where('id', $exercise_id)->first();
             if ($exercise->delete()) {
-                return response()->json(['message' => 'Exercise removed succesfully'], 201);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Exercise removed successfully',
+                ], 200);
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error removing exercise'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error removing exercise',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\ExerciseController;
+use App\Http\Controllers\User_TrainingController;
+use App\Http\Controllers\Training_ExerciseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +26,8 @@ use App\Http\Controllers\ExerciseController;
 Route::resource('/user', UserController::class);
 Route::resource('/training', TrainingController::class);
 Route::resource('/exercise', ExerciseController::class);
+Route::resource('/user_training', User_TrainingController::class);
+Route::get('/user_training/user/{id}', [User_TrainingController::class, 'trainingsByUserId']);
+Route::resource('/training_exercise', Training_ExerciseController::class);
+Route::get('/training_exercise/training/{id}', [Training_ExerciseController::class, 'exercisesByTrainingId']);
+Route::delete('/training_exercise/exercise/{training_id}/{exercise_id}', [Training_ExerciseController::class, 'removeExercise']);
