@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTrainingRequest;
-use App\Http\Requests\UpdateTrainingRequest;
 use App\Models\Training;
-use App\Models\Exercise;
 use Illuminate\Http\Request;
 
 

@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Exercise;
-use App\Models\Training;
 use App\Models\User_Training;
+use Exception;
 
 class User_TrainingController extends Controller
 {
@@ -32,6 +30,10 @@ class User_TrainingController extends Controller
     public function store(Request $request)
     {
         try {
+            $duplicated = User_Training::where('user_id', $request['user_id'])->where('training_id', $request['training_id'])->first();
+            if ($duplicated) {
+                throw new Exception('Error: The training_id already exists for this user_id.');
+            }
             $validated = $request->validate([
                 'user_id' => 'required',
                 'training_id' => 'required',

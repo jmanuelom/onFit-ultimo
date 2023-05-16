@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Exercise;
-use App\Models\Training;
 use App\Models\Training_Exercise;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
+use Exception;
 
 class Training_ExerciseController extends Controller
 {
@@ -37,6 +34,10 @@ class Training_ExerciseController extends Controller
                 'training_id' => 'required',
                 'exercise_id' => 'required',
             ]);
+            $duplicated = Training_Exercise::where('training_id', $request['training_id'])->where('exercise_id', $request['exercise_id'])->first();
+            if ($duplicated) {
+                throw new Exception('Error: The exercise_id already exists for this training_id.');
+            }
             if ($validated) {
                 $training_exercise = new Training_Exercise;
                 $training_exercise->training_id = $request['training_id'];

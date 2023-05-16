@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 
 class UserController extends Controller
 {
@@ -63,12 +64,17 @@ class UserController extends Controller
                     ], 200);
                 }
             }
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error storing users',
-                'error' => $e->getMessage()
-            ], 500);
+        } catch (QueryException $e) {
+            if ($e->errorInfo[1] == 1062) {
+                // El campo "email" ya existe en la base de datos
+                return response()->json(['message' => 'El correo electrónico ya está registrado.'], 422);
+            } else {
+                // Otro error de la base de datos
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al crear el usuario.'
+                ], 500);
+            }
         }
     }
 
