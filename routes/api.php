@@ -7,6 +7,8 @@ use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\User_TrainingController;
 use App\Http\Controllers\Training_ExerciseController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,3 +33,5 @@ Route::get('/user_training/user/{id}', [User_TrainingController::class, 'trainin
 Route::resource('/training_exercise', Training_ExerciseController::class);
 Route::get('/training_exercise/training/{id}', [Training_ExerciseController::class, 'exercisesByTrainingId']);
 Route::delete('/training_exercise/exercise/{training_id}/{exercise_id}', [Training_ExerciseController::class, 'removeExercise']);
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/register', [RegisterController::class, 'register']);

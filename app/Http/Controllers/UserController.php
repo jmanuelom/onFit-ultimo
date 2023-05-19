@@ -13,6 +13,7 @@ class UserController extends Controller
         try {
             $users = User::all();
             return response()->json([
+                'status' => 'ok',
                 'success' => true,
                 'message' => 'Users loaded successfully',
                 'data' => $users
@@ -58,6 +59,7 @@ class UserController extends Controller
                 $user->subscription = $request['subscription'];
                 if ($user->save()) {
                     return response()->json([
+                        'status' => 'ok',
                         'success' => true,
                         'message' => 'User stored successfully',
                         'data' => $user
