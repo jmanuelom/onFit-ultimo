@@ -31,17 +31,17 @@ class Training_ExerciseController extends Controller
     {
         try {
             $validated = $request->validate([
-                'training_id' => 'required',
-                'exercise_id' => 'required',
+                'trainingId' => 'required',
+                'exerciseId' => 'required',
             ]);
-            $duplicated = Training_Exercise::where('training_id', $request['training_id'])->where('exercise_id', $request['exercise_id'])->first();
+            $duplicated = Training_Exercise::where('trainingId', $request['trainingId'])->where('exerciseId', $request['exerciseId'])->first();
             if ($duplicated) {
-                throw new Exception('Error: The exercise_id already exists for this training_id.');
+                throw new Exception('Error: The exerciseId already exists for this trainingId.');
             }
             if ($validated) {
                 $training_exercise = new Training_Exercise;
-                $training_exercise->training_id = $request['training_id'];
-                $training_exercise->exercise_id = $request['exercise_id'];
+                $training_exercise->trainingId = $request['trainingId'];
+                $training_exercise->exerciseId = $request['exerciseId'];
                 if ($training_exercise->save()) {
                     return response()->json([
                         'success' => true,
@@ -80,21 +80,21 @@ class Training_ExerciseController extends Controller
         }
     }
 
-    public function exercisesByTrainingId($training_id)
+    public function exercisesByTrainingId($trainingId)
     {
         try {
-            $training_exercises = Training_Exercise::where('training_id', $training_id)->with(['training', 'exercise'])->get();
+            $training_exercises = Training_Exercise::where('trainingId', $trainingId)->with(['training', 'exercise'])->get();
             if ($training_exercises) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Training_exercises by training_id loaded successfully',
+                    'message' => 'Training_exercises by trainingId loaded successfully',
                     'data' => $training_exercises
                 ], 200);
             }
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error loading user_trainings by training_id',
+                'message' => 'Error loading user_trainings by trainingId',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -102,7 +102,7 @@ class Training_ExerciseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    /*public function update($id, $exercise_id)
+    /*public function update($id, $exerciseId)
     {
         try {
             $validator = Validator::make(['id' => $id], [
@@ -115,18 +115,18 @@ class Training_ExerciseController extends Controller
 
             $training_exercise = Training_exercise::where('id', $id)->first();
             if ($validator->passes()) {
-                if ($request['training_id'] && $request['exercise_id']) {
-                    $training_exercise->training_id = $request['training_id'];
-                    $training_exercise->exercise_id = $request['exercise_id'];
-                } else if ($request['training_id']) {
-                    $training_exercise->training_id = $request['training_id'];
+                if ($request['trainingId'] && $request['exerciseId']) {
+                    $training_exercise->trainingId = $request['trainingId'];
+                    $training_exercise->exerciseId = $request['exerciseId'];
+                } else if ($request['trainingId']) {
+                    $training_exercise->trainingId = $request['trainingId'];
                 } else {
-                    $training_exercise->exercise_id = $request['exercise_id'];
+                    $training_exercise->exerciseId = $request['exerciseId'];
                 }
-                if ($training_exercise->exercise->contains('id', $exercise_id)) {
+                if ($training_exercise->exercise->contains('id', $exerciseId)) {
                     
                 } else {
-                    // $exercise_id no existe en la instancia $training_exercise
+                    // $exerciseId no existe en la instancia $training_exercise
                 }
                     
                  
@@ -155,16 +155,18 @@ class Training_ExerciseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($training_exercise_id)
+    public function destroy($trainingId)
     {
         try {
-            $training_exercise = Training_exercise::where('id', $training_exercise_id)->first();
-            if ($training_exercise->delete()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Training_exercise removed successfully',
-                ], 200);
+            $training_exercise = Training_exercise::where('trainingId', $trainingId)->get();
+            foreach ($training_exercise as $value) {
+                $value->delete();
             }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Training_exercise removed successfully',
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

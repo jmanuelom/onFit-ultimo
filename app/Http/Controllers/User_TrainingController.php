@@ -30,19 +30,18 @@ class User_TrainingController extends Controller
     public function store(Request $request)
     {
         try {
-            $duplicated = User_Training::where('user_id', $request['user_id'])->where('training_id', $request['training_id'])->first();
+            $duplicated = User_Training::where('userId', $request['userId'])->where('trainingId', $request['trainingId'])->first();
             if ($duplicated) {
-                throw new Exception('Error: The training_id already exists for this user_id.');
+                throw new Exception('Error: The trainingId already exists for this userId.');
             }
             $validated = $request->validate([
-                'user_id' => 'required',
-                'training_id' => 'required',
-                'rating' => 'required'
+                'userId' => 'required',
+                'trainingId' => 'required'
             ]);
             if ($validated) {
                 $user_training = new User_Training;
-                $user_training->user_id = $request['user_id'];
-                $user_training->training_id = $request['training_id'];
+                $user_training->userId = $request['userId'];
+                $user_training->trainingId = $request['trainingId'];
                 $user_training->rating = $request['rating'];
                 $user_training->date = $request['date'];
                 if ($user_training->save()) {
@@ -83,14 +82,14 @@ class User_TrainingController extends Controller
         }
     }
 
-    public function trainingsByUserId($user_id)
+    public function trainingsByUserId($userId)
     {
         try {
-            $user_trainings = User_training::where('user_id', $user_id)->with(['user', 'training'])->get();
+            $user_trainings = User_training::where('userId', $userId)->with(['user', 'training'])->get();
             if ($user_trainings) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'User_Trainings by user_id loaded successfully',
+                    'message' => 'User_Trainings by userId loaded successfully',
                     'data' => $user_trainings
                 ], 200);
             }
@@ -110,15 +109,15 @@ class User_TrainingController extends Controller
     {
         try {
             $user_training_validated = $user_training->validate([
-                'user_id' => 'required',
-                'training_id' => 'required',
+                'userId' => 'required',
+                'trainingId' => 'required',
                 'rating' => 'required'
             ]);
 
 
             if ($user_training_validated) {
-                $user_training->training_id = $user_training['training_id'];
-                $user_training->user_id = $user_training['user_id'];
+                $user_training->trainingId = $user_training['trainingId'];
+                $user_training->userId = $user_training['userId'];
                 $user_training->rating = $user_training['rating'];
                 if ($user_training->save()) {
                     return response()->json([
@@ -140,10 +139,10 @@ class User_TrainingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($user_training_id)
+    public function destroy($user_trainingId)
     {
         try {
-            $user_training = User_Training::where('id', $user_training_id)->first();
+            $user_training = User_Training::where('id', $user_trainingId)->first();
             if ($user_training->delete()) {
                 return response()->json([
                     'success' => true,

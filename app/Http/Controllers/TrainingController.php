@@ -42,14 +42,14 @@ class TrainingController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required',
-                'level' => 'required',
-                'unique' => 'required'
+                'level' => 'required'
             ]);
 
             if ($validated) {
                 $training = new Training;
                 $training->name = $request['name'];
                 $training->level = $request['level'];
+                $training->description = $request['description'];
                 $training->unique = $request['unique'];
                 if ($training->save()) {
                     return response()->json([
