@@ -8,6 +8,38 @@ use Illuminate\Database\QueryException;
 
 class UserController extends Controller
 {
+
+    public function login(Request $request)
+    {
+        try {
+            if ($request['email'] && $request['password']) {
+                $user = User::where('email', $request['email'])->first();
+
+                if (!$user) {
+                    // No se encontró ningún usuario con las credenciales proporcionadas
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Credenciales inválidas',
+                    ], 422);
+                }
+
+                unset($user->password);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User verified.',
+                    'data' => $user
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error validating user',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function index()
     {
         try {
@@ -46,20 +78,24 @@ class UserController extends Controller
     {
         try {
             $validated = $request->validate([
-                'username' => 'required',
+                'name' => 'required',
                 'password' => 'required',
                 'email' => 'required',
+                'level' => 'required',
                 'subscription' => 'required'
             ]);
             if ($validated) {
                 $user = new User;
-                $user->username = $request['username'];
+                $user->name = $request['name'];
+                $user->lastName = $request['lastName'];
                 $user->password = $request['password'];
                 $user->email = $request['email'];
+                $user->level = $request['level'];
                 $user->subscription = $request['subscription'];
+                $user->birthdate = $request['birthdate'];
+                $user->image = $request['image'];
                 if ($user->save()) {
                     return response()->json([
-                        'status' => 'ok',
                         'success' => true,
                         'message' => 'User stored successfully',
                         'data' => $user
@@ -118,27 +154,30 @@ class UserController extends Controller
      *
      * 
      */
-    public function update(User $user, Request $request)
+    public function update($id, Request $request)
     {
         try {
-            $validated = $request->validate([
-                'username' => 'required',
-                'password' => 'required',
-                'email' => 'required',
-                'subscription' => 'required'
-            ]);
-            if ($validated) {
-                $user->username = $request['username'];
-                $user->password = $request['password'];
-                $user->email = $request['email'];
-                $user->subscription = $request['subscription'];
-                if ($user->save()) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'User modified successfully',
-                        'data' => $user
-                    ], 200);
-                }
+            $user = $request->input('user');
+            $newPassword = $request->input('newPassword');
+
+            $userModel = User::find($id);
+            $userModel->name = $user['name'];
+            $userModel->lastName = $user['lastName'];
+            // Verifica y actualiza la contraseña solo si se proporciona una nueva contraseña válida
+            if (!empty($newPassword) && $userModel->password == $user['password']) {
+                $userModel->password = $newPassword;
+            }
+            $userModel->email = $user['email'];
+            $userModel->level = $user['level'];
+            $userModel->subscription = $user['subscription'];
+            $userModel->birthdate = $user['birthdate'];
+            $userModel->image = $user['image'];
+            if ($userModel->save()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User modified successfully',
+                    'data' => $user
+                ], 200);
             }
         } catch (\Exception $e) {
             return response()->json([

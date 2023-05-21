@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('birthdate');
             $table->integer('level');
             $table->boolean('subscription');
+            $table->string('image');
             $table->timestamps();
         });
     }
