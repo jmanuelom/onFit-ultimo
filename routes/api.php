@@ -26,7 +26,6 @@ use App\Http\Controllers\RegisterController;
 });*/
 
 Route::resource('/user', UserController::class);
-//Route::put('user', [UserController::class, 'update']);
 Route::resource('/training', TrainingController::class);
 Route::resource('/exercise', ExerciseController::class);
 Route::resource('/user_training', User_TrainingController::class);
@@ -35,5 +34,3 @@ Route::resource('/training_exercise', Training_ExerciseController::class);
 Route::get('/training_exercise/training/{id}', [Training_ExerciseController::class, 'exercisesByTrainingId']);
 Route::delete('/training_exercise/exercise/{training_id}/{exercise_id}', [Training_ExerciseController::class, 'removeExercise']);
 Route::post('/login', [UserController::class, 'login']);
-/*Route::post('/login', [AuthLoginController::class, 'login']);
-Route::post('/register', [RegisterController::class, 'register']);*/

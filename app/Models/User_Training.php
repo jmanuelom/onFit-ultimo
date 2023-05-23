@@ -12,11 +12,11 @@ class user_training extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'userId');
     }
 
     public function training()
     {
-        return $this->belongsTo(Training::class);
+        return $this->belongsTo(Training::class, 'trainingId');
     }
 }

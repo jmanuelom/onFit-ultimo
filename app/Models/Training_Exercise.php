@@ -11,11 +11,11 @@ class training_exercise extends Model
 
     public function training()
     {
-        return $this->belongsTo(Training::class);
+        return $this->belongsTo(Training::class, 'trainingId');
     }
 
     public function exercise()
     {
-        return $this->belongsTo(Exercise::class);
+        return $this->belongsTo(Exercise::class, 'exerciseId');
     }
 }

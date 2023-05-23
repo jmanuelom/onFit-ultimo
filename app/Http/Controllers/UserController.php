@@ -22,14 +22,20 @@ class UserController extends Controller
                         'message' => 'Credenciales inválidas',
                     ], 422);
                 }
+                if ($user->password == $request['password']) {
+                    unset($user->password);
 
-                unset($user->password);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'User verified.',
-                    'data' => $user
-                ], 200);
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'User verified.',
+                        'data' => $user
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Passwords don't match",
+                    ], 500);
+                }
             }
         } catch (\Exception $e) {
             return response()->json([
